@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-cleaner
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  schedule: "*/15 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: {{ .Release.Name }}-cleaner
+          containers:
+          - name: helm-release-cleaner
+            image: abualks/helm-release-cleaner:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - "./helm-release-cleaner"
+            args:
+            - "--namespace={{ .Release.Namespace }}"
+            - "--cleanup-age={{ .Values.cleanAge | default 120 }}"
+          restartPolicy: OnFailure
