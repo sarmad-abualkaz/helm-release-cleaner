@@ -2,13 +2,13 @@ package cmd
 
 import (
 	
-	"helm.sh/helm/v3/pkg/time"
+	"github.com/sarmad-abualkaz/helm-release-cleaner/util"
 
 	log "github.com/sirupsen/logrus"
 	callhelm "github.com/sarmad-abualkaz/helm-release-cleaner/helm"
 )
 
-func CleanReleases(dryRun bool, namespace string, cleanup int, repoCache string, repoConfig string, debug bool, linting bool) {
+func CleanReleases(dryRun bool, namespace string, releasesMap map[string]bool, cleanup int, repoCache string, repoConfig string, debug bool, linting bool) {
 
 
 	helmclient, helmclienterr := callhelm.CreateClient(namespace, repoCache, repoConfig, debug, linting)
@@ -45,17 +45,8 @@ func CleanReleases(dryRun bool, namespace string, cleanup int, repoCache string,
 	}
 	
 	for _, release := range(releases){
-		currentTime := time.Now().UTC()
-		lastDeployedTime := release.Info.LastDeployed.UTC()
-		diff := currentTime.Sub(lastDeployedTime).Minutes()
 
-		if diff > float64(cleanup) {
-			log.WithFields(log.Fields{
-				"namespace": namespace,
-				"release": release.Name,
-				"lastDeplay": lastDeployedTime,
-				"age (in min)": diff,
-			}).Warn("Release is going to be deleted ...")
+		if util.ShouldDelete(release, cleanup, releasesMap) {
 				
 			if !dryRun {
 				deleteReleaseErr := callhelm.DeleteRelease(helmclient, release.Name, namespace)
@@ -63,20 +54,14 @@ func CleanReleases(dryRun bool, namespace string, cleanup int, repoCache string,
 				if deleteReleaseErr != nil {
 
 					log.WithFields(log.Fields{
-						"release": release,
-						"namespace": namespace,
+						"release": release.Name,
+						"namespace": release.Namespace,
 						"Error": deleteReleaseErr.Error(),
 					  }).Error("Failed to delete release ...")
 				}
 			}
 
-		} else {
-			log.WithFields(log.Fields{
-				"namespace": namespace,
-				"release": release.Name,
-				"lastDeplay": release.Info.LastDeployed.UTC(),
-				"age (in min)": diff,
-			}).Info("Release is still within allowed age ...")
 		}
+
 	}
 }
