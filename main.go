@@ -19,6 +19,7 @@ func main(){
 	clientDebug := flag.Bool("client-debug", false, "Enable debug level on helm client")
 	clientLinting := flag.Bool("client-linting", true, "Enable linting on helm client")
 
+	releasesMap := make(map[string]bool)
 	
 	flag.Parse()
 
@@ -40,16 +41,7 @@ func main(){
 			"namespace": *namespace,
 		  }).Info("kicking generic release cleaner - no releases specified...")
 
-		cmd.CleanReleases(*dryRun, *namespace, *cleanupAge, *repoCache, *repoConfig, *clientDebug, *clientLinting)
-
 	} else {
-
-		releasesList := strings.Split(*releases, " ")
-		releasesMap := make(map[string]bool)
-
-		for _, release := range(releasesList) {
-			releasesMap[release] = true
-		}
 
 		log.WithFields(log.Fields{
 			"cleanup-age": *cleanupAge,
@@ -58,8 +50,15 @@ func main(){
 			"releases": *releases,
 		  }).Info("kicking specific release cleaner...")
 
-		cmd.CleanSepecificReleases(*dryRun, *namespace, releasesMap, *cleanupAge, *repoCache, *repoConfig, *clientDebug, *clientLinting)
+		  releasesList := strings.Split(*releases, " ")
+
+		  for _, release := range(releasesList) {
+			releasesMap[release] = true
+			
+		}
 
 	}
+
+	cmd.CleanReleases(*dryRun, *namespace, releasesMap, *cleanupAge, *repoCache, *repoConfig, *clientDebug, *clientLinting)
 
 }

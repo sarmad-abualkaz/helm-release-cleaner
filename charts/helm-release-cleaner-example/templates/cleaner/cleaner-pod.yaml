@@ -23,11 +23,12 @@ spec:
           serviceAccountName: {{ .Release.Name }}-cleaner
           containers:
           - name: helm-release-cleaner
-            image: abualks/helm-release-cleaner:latest
+            image: abualks/helm-release-cleaner:0.0.2
             imagePullPolicy: IfNotPresent
             command:
             - "./helm-release-cleaner"
             args:
             - "--namespace={{ .Release.Namespace }}"
+            - "--releases={{ .Release.Name }} {{ .Release.Name }}-resources"
             - "--cleanup-age={{ .Values.cleanAge | default 120 }}"
           restartPolicy: OnFailure
