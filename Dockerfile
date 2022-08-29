@@ -13,6 +13,7 @@ RUN go mod download
 COPY main.go main.go
 COPY helm/ helm/
 COPY cmd/ cmd/
+COPY util/ util/
 
 # Build
 RUN CGO_ENABLExD=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o helm-release-cleaner main.go
