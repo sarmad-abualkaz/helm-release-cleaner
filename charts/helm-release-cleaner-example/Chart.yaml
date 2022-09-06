@@ -10,5 +10,5 @@ appVersion: "0.0.4"
 
 dependencies:
   - name: helm-release-cleaner
-    version: "0.1.1"
+    version: "0.1.2"
     repository: "https://sarmad-abualkaz.github.io/my-helm-charts"
