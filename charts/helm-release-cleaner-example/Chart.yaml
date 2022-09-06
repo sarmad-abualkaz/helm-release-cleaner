@@ -1,5 +1,5 @@
 apiVersion: v2
-name: helm-cleaner
+name: helm-cleaner-example
 description: A Helm chart for Kubernetes
 
 type: application
@@ -7,3 +7,8 @@ type: application
 version: 0.1.1
 
 appVersion: "0.0.4"
+
+dependencies:
+  - name: helm-release-cleaner
+    version: "0.1.1"
+    repository: "https://sarmad-abualkaz.github.io/my-helm-charts"
