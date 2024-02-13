@@ -32,6 +32,6 @@ spec:
             - "--releases={{ .Values.releases | default .Release.Name }}"
             - "--cleanup-age={{ .Values.cleanAge | default 120 }}"
             {{- if .Values.dryRun }}
-            - "--dry-run={{ .Values.dryRun }}
+            - "--dry-run={{ .Values.dryRun }}"
             {{- end }}
           restartPolicy: OnFailure
