@@ -21,5 +21,5 @@ RUN CGO_ENABLED=0 go build -o /go/bin/helm-release-cleaner
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
 FROM gcr.io/distroless/static-debian11:nonroot
-COPY --from=builder /go/bin/tophat-cleaner /
+COPY --from=builder /go/bin/helm-release-cleaner /
 ENTRYPOINT ["/helm-release-cleaner"]
