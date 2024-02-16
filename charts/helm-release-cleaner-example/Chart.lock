@@ -1,0 +1,6 @@
+dependencies:
+- name: helm-release-cleaner
+  repository: https://sarmad-abualkaz.github.io/my-helm-charts
+  version: 0.1.2
+digest: sha256:823b0472966bb21d80e3934823ef7220d5afee2e35938581593d7c00bc315d7b
+generated: "2024-02-13T16:49:35.075772-05:00"
