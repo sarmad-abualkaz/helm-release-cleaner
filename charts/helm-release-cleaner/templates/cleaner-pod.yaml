@@ -26,9 +26,12 @@ spec:
             image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
             imagePullPolicy: IfNotPresent
             command:
-            - "./helm-release-cleaner"
+            - "/helm-release-cleaner"
             args:
             - "--namespace={{ .Release.Namespace }}"
             - "--releases={{ .Values.releases | default .Release.Name }}"
             - "--cleanup-age={{ .Values.cleanAge | default 120 }}"
+            {{- if .Values.dryRun }}
+            - "--dry-run={{ .Values.dryRun }}"
+            {{- end }}
           restartPolicy: OnFailure
